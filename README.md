@@ -17,3 +17,17 @@ HTML
 CSS (including Google Fonts)
 JavaScript (for interactivity)
 
+File Structure 
+CurrencyExchangeRates
+│
+├── homepg.html                 
+├── converts
+│   ├── index1.html          
+│   ├── combine_exchange_rates.csv 
+│   ├── currencyconverter.js
+├── rates
+│   ├── index.html     
+├── currentExchange
+│   ├── currency.html    
+├── README.md              
+└── requirements.txt      
