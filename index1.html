@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Currency Converter</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap');
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #e9ecef;
+            color: #495057;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h1 {
+            text-align: center;
+            color: #fff;
+            padding: 20px;
+            background: linear-gradient(90deg, #b93e5b, #ff6f61); /* Gradient background */
+            margin: 0; /* No margin */
+            border-radius: 10px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            font-size: 3em; /* Increased font size */
+            font-family: 'Roboto', sans-serif; /* Using Roboto font */
+            letter-spacing: 1px; /* Adding letter spacing for a modern look */
+            text-transform: uppercase; /* Making text uppercase */
+            transition: background-color 0.3s, transform 0.3s; /* Added transform transition */
+        }
+
+        h1:hover {
+            transform: scale(1.05); /* Slightly increase size on hover */
+        }
+
+        .converter-container {
+            max-width: 400px; /* Maintain the width */
+            margin: 40px auto; /* Center the container with top margin */
+            padding: 20px; /* Add padding for spacing */
+            border: 1px solid #b93e5b; /* Use a consistent border color */
+            border-radius: 10px; /* Rounded corners */
+            background-color: #ffffff; /* White background for contrast */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+        }
+
+        .converter-container label {
+            display: block; /* Ensure labels are block-level for better layout */
+            font-weight: bold;
+            font-size: 1.2em; /* Slightly larger font size for emphasis */
+            margin-bottom: 5px; /* Spacing below labels */
+            color: #495057; /* Consistent color */
+        }
+
+        .converter-container input[type="number"],
+        .converter-container select {
+            width: 100%; /* Full width */
+            padding: 12px; /* Padding for input fields */
+            border: 1px solid #ced4da; /* Light border */
+            border-radius: 5px; /* Rounded edges */
+            transition: border-color 0.3s; /* Smooth border transition */
+        }
+
+        .converter-container input[type="number"]:focus,
+        .converter-container select:focus {
+            border-color: #b93e5b; /* Highlight border on focus */
+            outline: none; /* Remove default outline */
+        }
+
+        .converter-container button {
+            padding: 12px 20px; /* Adjust padding */
+            background-color: #b93e5b; /* Main button color */
+            color: white; /* Text color */
+            border: none; /* No border */
+            border-radius: 5px; /* Rounded corners */
+            cursor: pointer; /* Pointer cursor on hover */
+            font-size: 1.1em; /* Slightly larger font */
+            transition: background-color 0.3s, transform 0.3s; /* Smooth transitions */
+            margin-top: 15px; /* Space above button */
+            width: 100%; /* Full width for buttons */
+        }
+
+        .converter-container button:hover {
+            background-color: #b83c56; /* Darker shade on hover */
+            transform: translateY(-2px); /* Raise button on hover */
+        }
+
+        .result {
+            margin-top: 20px; /* Spacing above result */
+            font-weight: bold; /* Bold text for result */
+            text-align: center; /* Center text */
+            color: #495057; /* Text color */
+            font-size: 1.3em; /* Slightly larger font for results */
+            border: 1px solid #ced4da; /* Light border for emphasis */
+            border-radius: 5px; /* Rounded corners */
+            padding: 10px; /* Padding for spacing */
+            background-color: #f8f9fa; /* Light background for the result */
+        }
+
+        .currency-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .currency-table th, .currency-table td {
+            border: 1px solid #ced4da;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .currency-table th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+
+        .currency-table tr:hover {
+            background-color: #f1f1f1;
+        }
+    </style>
+</head>
+<body>
+    <h1>Convert USD to Other Currencies</h1>
+    <div class="converter-container">
+        <label for="usd_amount">Amount in USD:</label>
+        <input type="number" id="usd_amount" placeholder="Enter amount in USD" required>
+        
+        <label for="currency_code">Currency:</label>
+        <select id="currency_code">
+            <option value="INR">INR (Indian Rupee)</option>
+            <option value="EUR">EUR (Euro)</option>
+            <option value="GBP">GBP (British Pound)</option>
+            <option value="JPY">JPY (Japanese Yen)</option>
+            <option value="AUD">AUD (Australian Dollar)</option>
+            <option value="CAD">CAD (Canadian Dollar)</option>
+            <option value="CHF">CHF (Swiss Franc)</option>
+            <option value="CNY">CNY (Chinese Yuan)</option>
+            <option value="SGD">SGD (Singapore Dollar)</option>
+            <option value="ZAR">ZAR (South African Rand)</option>
+            <option value="BRL">BRL (Brazilian Real)</option>
+            <option value="DKK">DKK (Danish Krone)</option>
+            <option value="NZD">NZD (New Zealand Dollar)</option>
+            <option value="THB">THB (Thai Baht)</option>
+            <option value="BND">BND (Brunei Dollar)</option>
+            <option value="DZD">DZD (Algerian Dinar)</option>
+            <option value="BWP">BWP (Botswana Pula)</option>
+            <option value="USD">USD (US Dollar)</option>
+            <option value="CLP">CLP (Chilean Peso)</option>
+            <option value="CZK">CZK (Czech Koruna)</option>
+
+        </select>
+
+        <button onclick="convertCurrency()">Convert</button>
+        
+        <div class="result" id="conversionResult"></div>
+        
+    </div>
+
+    <script>
+        const apiUrl = 'https://v6.exchangerate-api.com/v6/15d1500e2c1b48c4f18d3094/latest/USD';
+        
+        function getCurrencyDescription(currency) {
+            const descriptions = {
+                INR: 'Indian Rupee',
+                EUR: 'Euro',
+                GBP: 'British Pound',
+                CAD: 'Canadian Dollar',
+                JPY: 'Japanese Yen',
+                AUD: 'Australian Dollar',
+                CHF: 'Swiss Franc',
+                CNY: 'Chinese Yuan',
+                SGD: 'Singapore Dollar',
+                ZAR: 'South African Rand',
+                BRL: 'Brazilian Real',
+                BND: 'Brunei Dollar',
+                DKK: 'Danish Krone',
+                DZD: 'Algerian Dinar',
+                BWP: 'Botswana Pula',
+                GBP: 'UK Pound',  
+                USD: 'US Dollar',
+                CLP: 'Chilean Peso',
+                CZK: 'Czech Koruna'
+            };
+            return descriptions[currency] || 'Unknown Currency';
+        }
+
+        async function convertCurrency() {
+            const usdAmount = document.getElementById('usd_amount').value;
+            const currencyCode = document.getElementById('currency_code').value;
+            const resultDiv = document.getElementById('conversionResult');
+
+            if (usdAmount === "" || usdAmount <= 0) {
+                resultDiv.innerText = "Please enter a valid amount.";
+                return;
+            }
+
+            try {
+                const response = await fetch(apiUrl);
+                
+                if (!response.ok) {
+                    throw new Error('Network response was not ok: ' + response.statusText);
+                }
+
+                const data = await response.json();
+                
+                // Check if conversion rates exist
+                if (!data.conversion_rates || !data.conversion_rates[currencyCode]) {
+                    resultDiv.innerText = "Currency not found in the conversion rates.";
+                    return;
+                }
+
+                const exchangeRate = data.conversion_rates[currencyCode];
+                const convertedAmount = (usdAmount * exchangeRate).toFixed(2);
+                resultDiv.innerText = `${convertedAmount} ${currencyCode}`;
+
+            } catch (error) {
+                resultDiv.innerText = "Error fetching exchange rate: " + error.message;
+            }
+        }
+
+        async function fetchExchangeRates() {
+            const exchangeRatesDiv = document.getElementById('exchangeRates');
+            const ratesBody = document.getElementById('ratesBody');
+
+            exchangeRatesDiv.style.display = 'none'; // Hide table before fetching
+
+            try {
+                const response = await fetch(apiUrl);
+                
+                if (!response.ok) {
+                    throw new Error('Network response was not ok: ' + response.statusText);
+                }
+
+                const data = await response.json();
+                ratesBody.innerHTML = ''; // Clear existing rows
+
+                Object.keys(data.conversion_rates).forEach(currency => {
+                    const row = document.createElement('tr');
+                    const currencyCell = document.createElement('td');
+                    const descriptionCell = document.createElement('td');
+                    const rateCell = document.createElement('td');
+
+                    currencyCell.innerText = currency;
+                    descriptionCell.innerText = getCurrencyDescription(currency);
+                    rateCell.innerText = data.conversion_rates[currency];
+
+                    row.appendChild(currencyCell);
+                    row.appendChild(descriptionCell);
+                    row.appendChild(rateCell);
+                    ratesBody.appendChild(row);
+                });
+
+                exchangeRatesDiv.style.display = 'block'; // Show the table
+            } catch (error) {
+                console.error("Error fetching exchange rates: " + error.message);
+            }
+        }
+    </script>
+</body>
+</html>

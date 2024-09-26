@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exchange Rate Dashboard</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap');
+
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    color: #b93e5b;
+}
+
+header {
+    background: linear-gradient(90deg, #b93e5b, #ff6f61); /* Gradient background */
+    color: #fff; /* White text */
+    padding: 17px;
+    text-align: center;
+    font-size: 2em; /* Larger font size */
+    font-weight: bold;
+    text-transform: uppercase; /* Uppercase for bold headers */
+    border-radius: 10px; /* Rounded corners for a modern look */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+    transition: transform 0.3s ease;
+}
+
+header:hover {
+    transform: scale(1.05); /* Slight enlarge on hover */
+}
+
+main {
+    max-width: 800px;
+    margin: 20px auto;
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+main:hover {
+    transform: translateY(-5px); /* Slight lift on hover */
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2); /* Enhanced shadow on hover */
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    font-size: 1.1em;
+    color: #495057;
+}
+
+select,
+input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 20px;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    transition: border-color 0.3s;
+}
+
+select:focus,
+input:focus {
+    border-color: #b93e5b;
+    outline: none;
+}
+
+button {
+    background-color: #b93e5b; /* Consistent color scheme */
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.1em;
+    transition: background-color 0.3s, transform 0.3s;
+    margin-top: 10px;
+}
+
+button:hover {
+    background-color: #b83c56;
+    transform: translateY(-2px);
+}
+
+#exchangeRates {
+    margin-bottom: 20px;
+    font-size: 1.1em;
+}
+
+#highestRate,
+#lowestRate {
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+#highestRate {
+    color: #4caf50; /* Green for highest rate */
+}
+
+#lowestRate {
+    color: #e74c3c; /* Red for lowest rate */
+}
+
+#chartContainer {
+    height: 300px;
+    margin-top: 20px;
+    border: 1px solid #ced4da;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Additional hover effects for better interactivity */
+#chartContainer:hover {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+}
+
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Exchange Rate Dashboard</h1>
+    </header>
+
+    <main>
+        <label for="currency1">Currency 1 (USD)</label>
+        <select id="currency1">
+            <option value="USD">USD</option>
+        </select>
+
+        <label for="currency2">Currency 2</label>
+        <select id="currency2"></select>
+        <label for="fileInput">Select CSV File:</label>
+        <input type="file" id="fileInput" accept=".csv">
+
+        <label for="duration">Select Duration</label>
+        <select id="duration">
+            <option value="weekly">Weekly</option>
+            <option value="monthly">Monthly</option>
+            <option value="quarterly">Quarterly</option>
+            <option value="yearly">Yearly</option>
+        </select>
+
+        <!-- Add these elements inside the <main> section -->
+        <div id="exchangeRates">
+            <p id="highestRate"></p>
+            <p id="lowestRate"></p>
+        </div>
+
+        <button onclick="generateChart()">Generate Chart</button>
+
+        <div id="chartContainer"></div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        let exchangeRateData;
+    
+        document.getElementById('fileInput').addEventListener('change', handleFileSelect);
+    
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    parseCSV(e.target.result);
+                };
+                reader.readAsText(file);
+            }
+        }
+    
+        function parseCSV(csvData) {
+            Papa.parse(csvData, {
+                header: true,
+                complete: function (result) {
+                    console.log(result); // Debugging log
+                    const currencies = Object.keys(result.data[0]).filter(currency => currency !== 'Date');
+                    populateCurrencyOptions(currencies);
+                    exchangeRateData = result.data;
+                }
+            });
+        }
+    
+        function populateCurrencyOptions(currencies) {
+            const currency2Select = document.getElementById('currency2');
+            currency2Select.innerHTML = '';
+    
+            currencies.forEach(currency => {
+                const option = document.createElement('option');
+                option.value = currency;
+                option.text = currency;
+                currency2Select.add(option);
+            });
+        }
+    
+        function generateChart() {
+            const currency2 = document.getElementById('currency2').value;
+    
+            if (!exchangeRateData || exchangeRateData.length === 0) {
+                alert('No data available for chart generation.');
+                return;
+            }
+    
+            const chartData = exchangeRateData.map(entry => ({
+                x: entry.Date ? new Date(entry.Date) : null,
+                y: entry[currency2] ? parseFloat(entry[currency2]) : null,
+            })).filter(entry => entry.x !== null && entry.y !== null);
+    
+            if (chartData.length === 0) {
+                alert('No valid data available for chart generation.');
+                return;
+            }
+    
+            const options = {
+                chart: {
+                    type: 'line',
+                    height: 350,
+                },
+                series: [{
+                    name: `${currency2}/USD Exchange Rate`,
+                    data: chartData,
+                }],
+                xaxis: {
+                    type: 'datetime',
+                },
+            };
+    
+            if (!window.chart) {
+                window.chart = new ApexCharts(document.getElementById('chartContainer'), options);
+                window.chart.render();
+            } else {
+                window.chart.updateOptions(options);
+            }
+    
+            const highestEntry = chartData.reduce((prev, current) => (prev.y > current.y) ? prev : current);
+            const lowestEntry = chartData.reduce((prev, current) => (prev.y < current.y) ? prev : current);
+    
+            document.getElementById('highestRate').textContent = `Highest exchange rate: ${highestEntry.y.toFixed(2)} on ${highestEntry.x.toISOString().split('T')[0]}`;
+            document.getElementById('lowestRate').textContent = `Lowest exchange rate: ${lowestEntry.y.toFixed(2)} on ${lowestEntry.x.toISOString().split('T')[0]}`;
+        }
+    </script>
+    
+
+</body>
+
+</html>
